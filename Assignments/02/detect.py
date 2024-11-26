@@ -9,14 +9,14 @@ cap = cv2.VideoCapture(0) # Use '0' for computer camera, and '1' for phone camer
 # Apply edge detection, using the Canny edge detector
 def detect_edges(frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) # Convert to grayscale
-    blurred = cv2.GaussianBlur(gray, (5, 5), 1.5)
-    edges = cv2.Canny(blurred, 50, 150) # Might need to adjust the thresholds
+    blurred = cv2.GaussianBlur(gray, (3, 3), 1.0) # Tried (gray, (3, 3), 1.0) for smaller kernel size. Smooths the image to reduce noise while preserving edges. (had tried (5, 5), 1.5)
+    edges = cv2.Canny(blurred, 100, 200) # Might need to adjust the thresholds, tried (100, 200), was (50, 150). lower thresholds detect weaker edges but can include noise. Higher thresholds focuse on strong edges
     return edges
 
 # Extract edge coordinates, by converting edge-detected image into a list of coordinates
-def get_edge_coordinates(edges):
+def get_edge_coordinates(edges, sampling_rate=1):
     coords = np.column_stack(np.where(edges > 0))
-    return coords
+    return coords[::sampling_rate] # Use every k-th point
 
 # Fit a line with RANSAC, identify the most prominent line among the edge points
 def fit_line_ransac(coords):
@@ -48,9 +48,12 @@ while cap.isOpened():
     if not ret:
         break
 
+    # Downscale the frame, reduces the number of pixels to process. With fewer pixels, each frame gets processed quicker, resulting in higher FPS. However, if scaled down too much, we can lose fine details.
+    small_frame = cv2.resize(frame, (640, 480)) # Resize to a smaller resolution (tied 320, 240 as well, was first 640, 480) (I think 320, 240 is too small)
+
     # Process and detect
-    edges = detect_edges(frame)
-    coords = get_edge_coordinates(edges)
+    edges = detect_edges(small_frame)
+    coords = get_edge_coordinates(edges, sampling_rate=10) # Tried to use all points first, but reduced to 10-th point for RANSAC to operate faster
     line_params = fit_line_ransac(coords)
     result_frame = draw_line(frame, line_params)
 
