@@ -1,0 +1,58 @@
+PART 1:
+
+4)
+
+I had 3 models available to me, yolov5m, yolov5n and yolov5s. All of the models were the same size (640). According to a table seen here (https://pytorch.org/hub/ultralytics_yolov5/), 5m is supposed to be the slowest of them and the 5n the fastest. I decided to try 5s and 5n.
+
+When measuring the frame rate, this is an example of what I got for the slower model (5s):
+
+Inference time: 188.46 ms
+FPS (Inference): 5.31
+FPS (full pipeline): 4.36
+Inference time: 185.61 ms
+FPS (Inference): 5.39
+FPS (full pipeline): 4.43
+Inference time: 178.41 ms
+FPS (Inference): 5.61
+FPS (full pipeline): 4.64
+Inference time: 169.95 ms
+FPS (Inference): 5.88
+FPS (full pipeline): 4.80
+Inference time: 187.04 ms
+FPS (Inference): 5.35
+FPS (full pipeline): 4.48
+
+And this is an example for the faster model (5n):
+
+Inference time: 78.29 ms
+FPS (Inference): 12.77
+FPS (full pipeline): 9.03
+Inference time: 85.58 ms
+FPS (Inference): 11.69
+FPS (full pipeline): 8.38
+Inference time: 84.02 ms
+FPS (Inference): 11.90
+FPS (full pipeline): 8.58
+Inference time: 84.08 ms
+FPS (Inference): 11.89
+FPS (full pipeline): 8.53
+Inference time: 81.73 ms
+FPS (Inference): 12.24
+FPS (full pipeline): 8.73
+
+Here we can see that the faster model (same size) is indeed a little bit faster.
+
+5) I tested the models on a live video, and tried to determine if they were accurate when determining if I was holding a remote or a cell phone.
+
+The models were quite accurate, but sometimes it mislabeled the object. For example, sometimes it labeled the cell phone as a bottle.
+I tested this by holding the remote 5 times and the cell phone 5 times, alternating between them.
+It got the remote correct 4/5 times, and the cell phone correct 2/5 times.
+The remote was labeled more often correctly!
+When I used a more busy background, then the remote was sometimes classified as a tie when I held it up in front of someone.
+
+
+
+PART 2:
+
+
+
